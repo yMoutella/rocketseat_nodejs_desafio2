@@ -1,0 +1,25 @@
+{
+  "name": "Desafio2_rocketseat",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:yMoutella/Desafio2_rocketseat.git",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "knex": "node --no-warnings --import tsx ./node_modules/.bin/knex"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "dotenv": "^16.5.0",
+    "fastify": "^5.3.3",
+    "knex": "^3.1.0",
+    "sqlite3": "^5.1.7",
+    "tsup": "^8.5.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
+    "zod": "^3.25.56"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.30"
+  }
+}
