@@ -23,7 +23,7 @@ export async function userHandler(app: FastifyInstance) {
 
     return res.status(201).send({
       message: 'User created successfully',
-      user: result
+      user: result[0]
     })
   })
 
