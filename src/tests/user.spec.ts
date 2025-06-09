@@ -219,7 +219,7 @@ describe('Meal management', () => {
     )
   })
 
-  it('should list all meals', async () => {
+  it('should get a specific meal', async () => {
 
     const createdUser = await supertest(app.server)
       .post('/user')
@@ -283,4 +283,199 @@ describe('Meal management', () => {
       })
     )
   })
+
+  it('should update a specific meal', async () => {
+
+    const createdUser = await supertest(app.server)
+      .post('/user')
+      .send({
+        name: 'John doe'
+      })
+      .expect(201)
+
+    expect(createdUser.body).toEqual(
+      expect.objectContaining({
+        message: expect.any(String),
+        user: expect.objectContaining({
+          id: expect.any(String),
+          name: expect.any(String),
+          created_at: expect.any(String)
+        })
+      })
+    )
+
+    const createdMeal = await supertest(app.server)
+      .post('/user/' + createdUser.body.user.id + '/meal')
+      .send({
+        name: "Dinner",
+        description: "diet dinner",
+        diet: true,
+        meal_dateTime: "2025-08-06T18:42:00"
+      })
+      .expect(201)
+
+    expect(createdMeal.body).toEqual(
+      expect.objectContaining({
+        message: expect.any(String),
+        meal: expect.objectContaining({
+          name: expect.any(String),
+          description: expect.any(String),
+          created_at: expect.any(String),
+          meal_timestamp: expect.any(String),
+          diet: expect.any(Number),
+          user_id: expect.any(String),
+          meal_id: expect.any(String),
+        })
+      })
+    )
+
+
+    const updatedMeal = await supertest(app.server)
+      .patch('/user/' + createdUser.body.user.id + '/meal/' + createdMeal.body.meal.meal_id)
+      .send({
+        'name': 'updated Dinner',
+        'description': 'this is my updated dinner diet test',
+        'diet': false,
+        'meal_dateTime': '2025-08-06T12:43:00'
+      })
+      .expect(200)
+
+    expect(updatedMeal.body).toEqual(
+      expect.objectContaining({
+        message: expect.any(String),
+        meal: expect.objectContaining({
+          name: expect.any(String),
+          description: expect.any(String),
+          meal_timestamp: expect.any(String),
+          diet: expect.any(Number),
+          user_id: expect.any(String),
+          created_at: expect.any(String),
+          meal_id: expect.any(String)
+        })
+      })
+    )
+  })
+
+
+  it('should delete a specific meal', async () => {
+
+    const createdUser = await supertest(app.server)
+      .post('/user')
+      .send({
+        name: 'John doe'
+      })
+      .expect(201)
+
+    expect(createdUser.body).toEqual(
+      expect.objectContaining({
+        message: expect.any(String),
+        user: expect.objectContaining({
+          id: expect.any(String),
+          name: expect.any(String),
+          created_at: expect.any(String)
+        })
+      })
+    )
+
+    const createdMeal = await supertest(app.server)
+      .post('/user/' + createdUser.body.user.id + '/meal')
+      .send({
+        name: "Dinner",
+        description: "diet dinner",
+        diet: true,
+        meal_dateTime: "2025-08-06T18:42:00"
+      })
+      .expect(201)
+
+    expect(createdMeal.body).toEqual(
+      expect.objectContaining({
+        message: expect.any(String),
+        meal: expect.objectContaining({
+          name: expect.any(String),
+          description: expect.any(String),
+          created_at: expect.any(String),
+          meal_timestamp: expect.any(String),
+          diet: expect.any(Number),
+          user_id: expect.any(String),
+          meal_id: expect.any(String),
+        })
+      })
+    )
+
+
+    const deletedMeal = await supertest(app.server)
+      .delete('/user/' + createdUser.body.user.id + '/meal/' + createdMeal.body.meal.meal_id)
+      .expect(200)
+
+    expect(deletedMeal.body).toEqual(
+      expect.objectContaining({
+        message: expect.any(String),
+      })
+    )
+  })
+
+  it('should return the diet statistics', async () => {
+
+    const createdUser = await supertest(app.server)
+      .post('/user')
+      .send({
+        name: 'John doe'
+      })
+      .expect(201)
+
+    expect(createdUser.body).toEqual(
+      expect.objectContaining({
+        message: expect.any(String),
+        user: expect.objectContaining({
+          id: expect.any(String),
+          name: expect.any(String),
+          created_at: expect.any(String)
+        })
+      })
+    )
+
+    const createdMeal = await supertest(app.server)
+      .post('/user/' + createdUser.body.user.id + '/meal')
+      .send({
+        name: "Dinner",
+        description: "diet dinner",
+        diet: true,
+        meal_dateTime: "2025-08-06T18:42:00"
+      })
+      .expect(201)
+
+    expect(createdMeal.body).toEqual(
+      expect.objectContaining({
+        message: expect.any(String),
+        meal: expect.objectContaining({
+          name: expect.any(String),
+          description: expect.any(String),
+          created_at: expect.any(String),
+          meal_timestamp: expect.any(String),
+          diet: expect.any(Number),
+          user_id: expect.any(String),
+          meal_id: expect.any(String),
+        })
+      })
+    )
+
+
+    const dietStatistics = await supertest(app.server)
+      .get('/user/' + createdUser.body.user.id + '/meal/diet-statistics')
+      .expect(200)
+
+    expect(dietStatistics.body).toEqual(
+      expect.objectContaining({
+        message: expect.any(String),
+        statistics: expect.objectContaining({
+          totalMeals: expect.any(Number),
+          dietMealsCount: expect.any(Number),
+          nonDietMealsCount: expect.any(Number),
+          betterDietSequence: expect.any(Number)
+        })
+      })
+    )
+  })
+
+
 })
